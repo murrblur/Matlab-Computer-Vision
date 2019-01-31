@@ -12,6 +12,8 @@ cam = webcam();
 videoFrame = snapshot(cam);   % snapshot()
 frameSize = size(videoFrame);
 % Create the video player object.
+Figure(1)
+subplot(2,2,1)
 videoPlayer = vision.VideoPlayer('Position', [500 500 [frameSize(2), frameSize(1)]+30]);
 
 runLoop = true;
@@ -23,11 +25,13 @@ while runLoop && frameCount < 3000
     frameCount = frameCount + 1;
     bbox_minSize = 200;
     featureVector = ColorHist(videoFrame);
-    [guess2, scores] = predict(trainedModelColorsCompact,featureVector)
-    secondVector = array2table(secondVector);
+    [guess2, scores] = predict(trainedModelColorsCompact.ClassificationSVM,featureVector);
+    scores = (-1)*scores;
     featureVector = array2table(featureVector,'VariableNames',trainedModelColors.RequiredVariables);
-    bestGuess = trainedModelColors.predictFcn(featureVector);
-    label = ['Best Guess:',char(bestGuess)]
+    Figure(1)
+    subplot(2,2,2)
+    bar(scores,)
+    drawnow;
     step(videoPlayer, videoFrame);
     runLoop = isOpen(videoPlayer);
 end
